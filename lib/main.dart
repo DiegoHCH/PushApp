@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:push_app/config/router/app_router.dart';
 import 'package:push_app/config/theme/app_theme.dart';
 import 'package:push_app/presentation/blocs/notifications/notifications_bloc.dart';
@@ -29,6 +30,44 @@ class MainApp extends StatelessWidget {
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
       theme: AppTheme().getTheme(),
+      builder: (context, child) => HandlerNotificationsInteractions(child: child!),
     );
+  }
+}
+
+class HandlerNotificationsInteractions extends StatefulWidget {
+
+  final Widget child;
+
+  const HandlerNotificationsInteractions({super.key, required this.child});
+
+  @override
+  State<HandlerNotificationsInteractions> createState() => _HandlerNotificationsInteractionsState();
+}
+
+class _HandlerNotificationsInteractionsState extends State<HandlerNotificationsInteractions> {
+
+  Future<void> setupInteractedMessage() async {
+
+    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+
+    if( initialMessage != null ) {
+      _handlerMessage(initialMessage);
+    }
+
+    FirebaseMessaging.onMessageOpenedApp.listen(_handlerMessage);
+  }
+
+  void _handlerMessage( RemoteMessage message ) {
+
+    context.read<NotificationsBloc>().handlerRemoteMessage(message);
+
+    final messageId = message.messageId?.replaceAll(':', '').replaceAll('%', '');
+    appRouter.push('push-details/$messageId');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
   }
 }
