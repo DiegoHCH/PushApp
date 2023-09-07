@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1034510147658",
+    "project_id": "flutter-notifications-6713f",
+    "storage_bucket": "flutter-notifications-6713f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034510147658:android:d9598a07c36102f14306b3",
+        "android_client_info": {
+          "package_name": "com.diegohoyos.push_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1034510147658-r5ecl80ao0rt5b5306es5nt599je4njf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1VgB6OaLJbNqS_jyva5jdPvdH7ziG3c4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1034510147658-r5ecl80ao0rt5b5306es5nt599je4njf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
