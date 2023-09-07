@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:push_app/domain/entities/push_message.dart';
 import 'package:push_app/firebase_options.dart';
 
 part 'notifications_event.dart';
@@ -56,11 +59,21 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   }
 
   void _handlerRemoteMessage( RemoteMessage message) {
-    print('Recibí un mensaje mientras estaba en primer plano!');
-    print('Datos del mensaje: ${message.data}');
-
     if( message.notification == null ) return;
-    print('El mensaje también contenía una notificación: ${message.notification}');
+    final notification = PushMessage(
+      messageId: message.messageId
+        ?.replaceAll(':', '').replaceAll('%', '')
+        ?? '', 
+      title: message.notification!.title ?? '', 
+      body: message.notification!.body ?? '', 
+      sentDate: message.sentTime ?? DateTime.now(),
+      data: message.data,
+      imageUrl: Platform.isAndroid
+        ? message.notification!.android?.imageUrl
+        : message.notification!.apple?.imageUrl
+    );
+
+    print(notification);
   
   }
 
