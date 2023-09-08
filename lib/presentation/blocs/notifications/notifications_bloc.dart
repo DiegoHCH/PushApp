@@ -99,7 +99,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
         id: ++pushNumberId,
         title: notification.title,
         body: notification.body,
-        data: notification.data.toString(),
+        data: notification.messageId,
       );
     }
     
