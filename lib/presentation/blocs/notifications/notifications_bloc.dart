@@ -7,8 +7,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:push_app/domain/entities/push_message.dart';
 import 'package:push_app/firebase_options.dart';
 
-import '../../../config/local_notifications/local_notifications.dart';
-
 part 'notifications_event.dart';
 part 'notifications_state.dart';
 
@@ -23,7 +21,18 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   int pushNumberId = 0;
 
-  NotificationsBloc() : super(const NotificationsState()) {
+  final Future<void> Function()? requestLocalNotificationPermissions;
+  final void Function({
+    required int id,
+    String? title,
+    String? body,
+    String? data,
+  })? showLocalNotification;
+
+  NotificationsBloc({
+    this.requestLocalNotificationPermissions,
+    this.showLocalNotification, 
+  }) : super(const NotificationsState()) {
     
     on<NotificationStatusChanged>( _notificationStatusChanged );
     on<NotificationReceived>( _onPushMessageReceived );
@@ -85,12 +94,15 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
         : message.notification!.apple?.imageUrl
     );
 
-    LocalNotifications.showLocalNotification(
-      id: ++pushNumberId,
-      title: notification.title,
-      body: notification.body,
-      data: notification.data.toString(),
-    );
+    if( showLocalNotification != null ){
+      showLocalNotification!(
+        id: ++pushNumberId,
+        title: notification.title,
+        body: notification.body,
+        data: notification.data.toString(),
+      );
+    }
+    
 
     add(NotificationReceived(notification));
   }
@@ -112,7 +124,10 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
       );
 
       //Solicitar permiso a las local notifications
-      await LocalNotifications.requestPermissionLocalNotifications();
+      if( requestLocalNotificationPermissions != null ){
+        await requestLocalNotificationPermissions!();
+      }
+      
 
       add( NotificationStatusChanged(settings.authorizationStatus) );
   }
